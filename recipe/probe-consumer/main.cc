@@ -25,7 +25,10 @@ int main() {
     std::vector<int32_t> result(4);
     {
       tiledb::Array array(ctx, uri, TILEDB_READ);
+      tiledb::Subarray subarray(ctx, array);
+      subarray.add_range<int32_t>(0, 1, 4);
       tiledb::Query query(ctx, array);
+      query.set_subarray(subarray);
       query.set_layout(TILEDB_ROW_MAJOR).set_data_buffer("values", result);
       if (query.submit() != tiledb::Query::Status::COMPLETE) return 3;
       if (query.result_buffer_elements().at("values").second != 4) return 4;
