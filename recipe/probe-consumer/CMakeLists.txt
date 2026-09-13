@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.21)
+project(tiledb_consumer C CXX)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+find_package(TileDB REQUIRED)
+add_executable(consumer main.cc)
+target_link_libraries(consumer PRIVATE TileDB::tiledb_shared)

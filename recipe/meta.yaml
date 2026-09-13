@@ -56,7 +56,10 @@ requirements:
     # see: https://github.com/conda-forge/google-cloud-cpp-feedstock/pull/108,
     - libcrc32c  # [win]
 test:
+  files:
+    - probe-consumer
   requires:
+    - ninja  # [win]
     - {{ compiler('cxx') }}
     - cmake
     - make  # [unix]
@@ -77,6 +80,12 @@ test:
     - test -e $PREFIX/lib/libcurl$SHLIB_EXT  # [not win]
     - if not exist %LIBRARY_LIB%\\libcurl.lib exit 1  # [win]
     - if not exist %LIBRARY_BIN%\\libcurl.dll exit 1  # [win]
+
+    - cmake -S probe-consumer -B consumer-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="%LIBRARY_PREFIX%"  # [win]
+    - cmake --build consumer-build  # [win]
+    - consumer-build\consumer.exe  # [win]
+    - dumpbin /headers consumer-build\consumer.exe | findstr /I /C:"AA64 machine (ARM64)"  # [win and arm64]
+    - dumpbin /headers "%LIBRARY_BIN%\tiledb.dll" | findstr /I /C:"AA64 machine (ARM64)"  # [win and arm64]
 
 about:
   home: http://tiledb.io

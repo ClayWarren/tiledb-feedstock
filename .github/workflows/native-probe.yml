@@ -1,0 +1,314 @@
+name: TileDB full-feature native Windows ARM64
+on:
+  push:
+    branches: [codex/tiledb-arm64-probe]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  probe:
+    if: github.repository == 'ClayWarren/tiledb-feedstock'
+    runs-on: windows-11-arm
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        config: [win_arm64_]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Retrieve verified native cloud prerequisites
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          New-Item -ItemType Directory -Path C:/tiledb-prereqs/win-arm64 -Force | Out-Null
+          gh run download 34648321112 --repo ClayWarren/aws-c-common-feedstock --name aws-c-common-arm64-package --dir "$env:RUNNER_TEMP/aws-c-common"
+          if ($LASTEXITCODE -ne 0) { throw 'Artifact download failed' }
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/aws-c-common" -Recurse -Filter 'aws-c-common-0.14.4-hfbbf558_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '81c83f63fb36ffcd87bb4ea6b4dc04e6ac5b72e0a2d406ce088fba694050cb6d') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          gh run download 34654361445 --repo ClayWarren/aws-c-cal-feedstock --name aws-c-cal-arm64-package --dir "$env:RUNNER_TEMP/aws-c-cal"
+          if ($LASTEXITCODE -ne 0) { throw 'Artifact download failed' }
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/aws-c-cal" -Recurse -Filter 'aws-c-cal-0.9.15-hc76c474_3.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '34cc88e5ce34a2acbc2043c841f36cba118d9222d8b97e6246d506825bfaf956') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          gh run download 34685606291 --repo ClayWarren/aws-c-io-feedstock --name aws-c-io-arm64-package --dir "$env:RUNNER_TEMP/aws-c-io"
+          if ($LASTEXITCODE -ne 0) { throw 'Artifact download failed' }
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/aws-c-io" -Recurse -Filter 'aws-c-io-0.27.5-haecf014_2.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '5d5a01f95ad863b2043506b9aacae2175f47b649ce79733ef2b72b19c79b343a') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          gh run download 34683192859 --repo ClayWarren/aws-c-compression-feedstock --name aws-c-compression-arm64-package --dir "$env:RUNNER_TEMP/aws-c-compression"
+          if ($LASTEXITCODE -ne 0) { throw 'Artifact download failed' }
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/aws-c-compression" -Recurse -Filter 'aws-c-compression-0.3.2-h30dcfef_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '6e070393418d3d268162fbeadbe87cc866eef82b6012094db8065f7fd843c7c0') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          gh run download 34685946215 --repo ClayWarren/aws-c-http-feedstock --name aws-c-http-arm64-package --dir "$env:RUNNER_TEMP/aws-c-http"
+          if ($LASTEXITCODE -ne 0) { throw 'Artifact download failed' }
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/aws-c-http" -Recurse -Filter 'aws-c-http-0.11.0-ha2548f8_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '19c6efee11aab48500e3a4dcc9ec4e4ebe7473a695eec0261dd7658589fd3d2d') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          gh run download 34685809643 --repo ClayWarren/aws-c-sdkutils-feedstock --name aws-c-sdkutils-arm64-package --dir "$env:RUNNER_TEMP/aws-c-sdkutils"
+          if ($LASTEXITCODE -ne 0) { throw 'Artifact download failed' }
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/aws-c-sdkutils" -Recurse -Filter 'aws-c-sdkutils-0.2.8-h28de954_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '08e57ecde6b689db02757a8189e2147ad44739874b4bacb44a650d4760beb046') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          gh run download 34686302178 --repo ClayWarren/aws-c-auth-feedstock --name aws-c-auth-arm64-package --dir "$env:RUNNER_TEMP/aws-c-auth"
+          if ($LASTEXITCODE -ne 0) { throw 'Artifact download failed' }
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/aws-c-auth" -Recurse -Filter 'aws-c-auth-0.10.4-hef5c981_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '5e80c747c65887e2b7f9ff2f460b1ac314f6604fe76e37f7098bb41957b00584') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          gh run download 34685671939 --repo ClayWarren/aws-checksums-feedstock --name aws-checksums-arm64-package --dir "$env:RUNNER_TEMP/aws-checksums"
+          if ($LASTEXITCODE -ne 0) { throw 'Artifact download failed' }
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/aws-checksums" -Recurse -Filter 'aws-checksums-0.2.10-h74ccf70_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne 'a1784e56e7ed9399b582834fd602befa0a1066229086b28536c6fc7e3ab2903a') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          gh run download 34686552867 --repo ClayWarren/aws-c-s3-feedstock --name aws-c-s3-arm64-package --dir "$env:RUNNER_TEMP/aws-c-s3"
+          if ($LASTEXITCODE -ne 0) { throw 'Artifact download failed' }
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/aws-c-s3" -Recurse -Filter 'aws-c-s3-0.13.1-h14a5b10_2.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '025a5bac84b85937f0b541944de6114d1e5b4740c6ee13c472a8d407520537d3') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          gh run download 34691202287 --repo ClayWarren/aws-c-event-stream-feedstock --name aws-c-event-stream-arm64-package --dir "$env:RUNNER_TEMP/aws-c-event-stream"
+          if ($LASTEXITCODE -ne 0) { throw 'Artifact download failed' }
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/aws-c-event-stream" -Recurse -Filter 'aws-c-event-stream-0.7.1-hd4f8111_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne 'ad1c2463205e224d241b86d439cc08225eedbbe4f325d52195fd128db13c6073') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          gh run download 34691548310 --repo ClayWarren/aws-c-mqtt-feedstock --name aws-c-mqtt-arm64-package --dir "$env:RUNNER_TEMP/aws-c-mqtt"
+          if ($LASTEXITCODE -ne 0) { throw 'Artifact download failed' }
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/aws-c-mqtt" -Recurse -Filter 'aws-c-mqtt-0.16.0-h05c48d6_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '7ff3cdc4baf2c8e52486453fecb28b0de66945db0621e080abc68425c88e9cd7') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          gh run download 34727565694 --repo ClayWarren/aws-crt-cpp-feedstock --name aws-crt-cpp-arm64-package --dir "$env:RUNNER_TEMP/aws-crt-cpp"
+          if ($LASTEXITCODE -ne 0) { throw 'Artifact download failed' }
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/aws-crt-cpp" -Recurse -Filter 'aws-crt-cpp-0.42.3-hd43a810_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne 'c409ee5c329a0fb0d531975d835cefffde485067b53f7726f8e4a88e8cb313e6') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          gh run download 34691706343 --repo ClayWarren/libprotobuf-feedstock --name libprotobuf-arm64-package --dir "$env:RUNNER_TEMP/libprotobuf"
+          if ($LASTEXITCODE -ne 0) { throw 'Artifact download failed' }
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/libprotobuf" -Recurse -Filter 'libprotobuf-7.35.1-hd8bd404_4.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '9b3c146bc75d433525dde0c0d2f5dd8f7386a99e74d81b43db79377ae0e8b2f3') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          gh run download 34692513936 --repo ClayWarren/re2-feedstock --name re2-arm64-package --dir "$env:RUNNER_TEMP/re2"
+          if ($LASTEXITCODE -ne 0) { throw 'Artifact download failed' }
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/re2" -Recurse -Filter 're2-2025.11.05-hae12b6c_3.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '93a2daca44cad63e08869b8685e173636fa43c246ef6edda779e531a13f233a5') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/re2" -Recurse -Filter 'libre2-11-2025.11.05-hc17862f_3.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '6903ee3b5e0aabda96e37ed0f6c7b1569ecc780d5305524bd449e24705434d16') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          gh run download 34693775929 --repo ClayWarren/grpc-cpp-feedstock --name grpc-arm64-package --dir "$env:RUNNER_TEMP/grpc-cpp"
+          if ($LASTEXITCODE -ne 0) { throw 'Artifact download failed' }
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/grpc-cpp" -Recurse -Filter 'libgrpc-1.82.1-h4abbb14_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne 'ce9b5032dec2a37ecba14a17f1027dc397b06c7c23ad9c487b55673093f38070') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          gh run download 34693961569 --repo ClayWarren/prometheus-cpp-feedstock --name prometheus-arm64-package --dir "$env:RUNNER_TEMP/prometheus-cpp"
+          if ($LASTEXITCODE -ne 0) { throw 'Artifact download failed' }
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/prometheus-cpp" -Recurse -Filter 'prometheus-cpp-1.3.0-h424416a_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne 'ca5658e9635653f74b8ff00a3ac3795eb606d299111f7a7dacfce0de05d9830d') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          gh run download 34716226789 --repo ClayWarren/cpp-opentelemetry-sdk-feedstock --name opentelemetry-arm64-package --dir "$env:RUNNER_TEMP/opentelemetry"
+          if ($LASTEXITCODE -ne 0) { throw 'Artifact download failed' }
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/opentelemetry" -Recurse -Filter 'libopentelemetry-cpp-1.27.0-h7a630e3_2.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '6121984fe1d53e0dc19d52a5b65223c9b0787088b0661d56491fe24f0a72ac33') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/opentelemetry" -Recurse -Filter 'libopentelemetry-cpp-headers-1.27.0-ha03c420_2.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '57582ec2e1068a787b21d2b0978b1fe10ccd600c95773194101b21ef7a886247') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          gh run download 34688449327 --repo ClayWarren/libcrc32c-feedstock --name libcrc32c-arm64-package --dir "$env:RUNNER_TEMP/crc32c"
+          if ($LASTEXITCODE -ne 0) { throw 'Artifact download failed' }
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/crc32c" -Recurse -Filter 'libcrc32c-1.1.2-h7f98d4a_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne 'd805fdf2b9e6496fdd99303ac24e0d31e12cf35f8c04044fd61dff0ef11d3dfd') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          gh run download 34727908362 --repo ClayWarren/aws-sdk-cpp-feedstock --name aws-sdk-cpp-arm64-package --dir "$env:RUNNER_TEMP/tiledb-aws-sdk-cpp-feedstock"
+          if ($LASTEXITCODE -ne 0) { throw 'Artifact download failed' }
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-aws-sdk-cpp-feedstock" -Recurse -Filter 'aws-sdk-cpp-1.11.833-hb621c46_10.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '593ad4d18c52342cbc781a3032f8163ef6e09c53ce35ad442e871272a7163f5d') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          gh run download 34689205269 --repo ClayWarren/azure-core-cpp-feedstock --name azure-core-arm64-package --dir "$env:RUNNER_TEMP/tiledb-azure-core-cpp-feedstock"
+          if ($LASTEXITCODE -ne 0) { throw 'Artifact download failed' }
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-azure-core-cpp-feedstock" -Recurse -Filter 'azure-core-cpp-1.16.3-hef4af3d_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '1facca313f69e8332f935f961351763414348496c257df04cd14fa61c3c687dc') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          gh run download 34689672853 --repo ClayWarren/azure-identity-cpp-feedstock --name azure-identity-arm64-package --dir "$env:RUNNER_TEMP/tiledb-azure-identity-cpp-feedstock"
+          if ($LASTEXITCODE -ne 0) { throw 'Artifact download failed' }
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-azure-identity-cpp-feedstock" -Recurse -Filter 'azure-identity-cpp-1.13.3-hecb4063_3.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '8937bca5d284e088868a3dbd31f962b4deb0b875e6d3526badd39a9b45991da5') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          gh run download 34689670571 --repo ClayWarren/azure-storage-common-cpp-feedstock --name azure-storage-common-arm64-package --dir "$env:RUNNER_TEMP/tiledb-azure-storage-common-cpp-feedstock"
+          if ($LASTEXITCODE -ne 0) { throw 'Artifact download failed' }
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-azure-storage-common-cpp-feedstock" -Recurse -Filter 'azure-storage-common-cpp-12.14.0-hecb4063_2.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne 'ad3cd8895f282b4d4746a777f1c05ab8babc46d24e5ba52b66a805601b5bf8e5') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          gh run download 34690022856 --repo ClayWarren/azure-storage-blobs-cpp-feedstock --name azure-blobs-arm64-package --dir "$env:RUNNER_TEMP/tiledb-azure-storage-blobs-cpp-feedstock"
+          if ($LASTEXITCODE -ne 0) { throw 'Artifact download failed' }
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-azure-storage-blobs-cpp-feedstock" -Recurse -Filter 'azure-storage-blobs-cpp-12.18.0-h39a52f5_2.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '59985ffba02ea751ae25c79a826d991fdc08e85bb32f83e0267c37a0f13b939c') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          gh run download 34690626384 --repo ClayWarren/azure-storage-files-datalake-cpp-feedstock --name azure-datalake-arm64-package --dir "$env:RUNNER_TEMP/tiledb-azure-storage-files-datalake-cpp-feedstock"
+          if ($LASTEXITCODE -ne 0) { throw 'Artifact download failed' }
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-azure-storage-files-datalake-cpp-feedstock" -Recurse -Filter 'azure-storage-files-datalake-cpp-12.16.0-hb395d12_2.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne 'e2662a14c7d1180898817176055f1f44e185d14607aec5d9c455f2ab7a58aa07') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          gh run download 34717578579 --repo ClayWarren/google-cloud-cpp-core-feedstock --name google-cloud-arm64-package --dir "$env:RUNNER_TEMP/tiledb-google-cloud-cpp-core-feedstock"
+          if ($LASTEXITCODE -ne 0) { throw 'Artifact download failed' }
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-google-cloud-cpp-core-feedstock" -Recurse -Filter 'libgoogle-cloud-bigtable-3.8.0-ha6cec69_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '242888ec82311b99c0905a8486ccaf9fb171c226564fe6690a52923254a33863') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-google-cloud-cpp-core-feedstock" -Recurse -Filter 'libgoogle-cloud-storage-3.8.0-h5b2f275_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne 'e486f6dad54471931c6ba4017b91acf2130b148c4db8550eac03448f926df295') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-google-cloud-cpp-core-feedstock" -Recurse -Filter 'libgoogle-cloud-iam-devel-3.8.0-h5d29faa_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne 'e50b6528e28087f7894e04394718afd96936791b57cc3687e04b43f43b768ffe') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-google-cloud-cpp-core-feedstock" -Recurse -Filter 'libgoogle-cloud-logging-3.8.0-h5d29faa_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '115cefcdde05f7b80d34b9948a2bc44c033cab906b838a01fab096d11f2f3494') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-google-cloud-cpp-core-feedstock" -Recurse -Filter 'libgoogle-cloud-3.8.0-h8b8127c_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne 'f6f1c585df40658f72539e065e86eba549b4d1e2c930aaef0d7993593e3d44ee') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-google-cloud-cpp-core-feedstock" -Recurse -Filter 'libgoogle-cloud-trace-3.8.0-h5d29faa_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne 'e6bb3c943afd7f6debfd057c4358f441a041a477d76f732395a821133a3b9e21') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-google-cloud-cpp-core-feedstock" -Recurse -Filter 'libgoogle-cloud-pubsub-devel-3.8.0-h5d29faa_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '12b4deff08182a22efa9b905f2a2a4f8a120ffef1d2d2391a126f1c7863d2f40') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-google-cloud-cpp-core-feedstock" -Recurse -Filter 'libgoogle-cloud-iam-3.8.0-h5d29faa_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '3d30176254614c16fa3b120a242390cdb77e70a783e5ec7905e06f863abf35f7') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-google-cloud-cpp-core-feedstock" -Recurse -Filter 'libgoogle-cloud-spanner-3.8.0-h5d29faa_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne 'a88a95c578ff6c1c703735be11be2567a3e7f942645e41fff18fd2fbcffc8ad9') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-google-cloud-cpp-core-feedstock" -Recurse -Filter 'libgoogle-cloud-opentelemetry-devel-3.8.0-h5d29faa_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '0f89211750c37a401de28406c5b73f7e0ed84fb96958ec5dc21a7112f29b7d96') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-google-cloud-cpp-core-feedstock" -Recurse -Filter 'libgoogle-cloud-bigtable-devel-3.8.0-h5d29faa_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne 'fc8152dd738d1e1255a04120042bb53296c4cd07bd4dd5ea4e973a33bf7222f1') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-google-cloud-cpp-core-feedstock" -Recurse -Filter 'libgoogle-cloud-monitoring-3.8.0-h5d29faa_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '920d6fc3529b3c4c20df586048ddb770650ddc363ac8bfaa8d9be7a599686504') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-google-cloud-cpp-core-feedstock" -Recurse -Filter 'libgoogle-cloud-opentelemetry-3.8.0-ha6cec69_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '3fa5a1d57c9246cd0d05b5ea33d8277d4542aca8f51a95f5f7f30d49a10ec4a6') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-google-cloud-cpp-core-feedstock" -Recurse -Filter 'libgoogle-cloud-spanner-devel-3.8.0-h5d29faa_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne 'c6e14ad3266916205b2bff2061cf3e2d11b4844ea236c50ea27d7726e1e9404c') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-google-cloud-cpp-core-feedstock" -Recurse -Filter 'libgoogle-cloud-storage-devel-3.8.0-hea7958e_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne 'b41008c052f196b8c9ac1d46648a0efe1dbcbcea7c0953ccd6bcb653f43be7a8') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-google-cloud-cpp-core-feedstock" -Recurse -Filter 'libgoogle-cloud-policytroubleshooter-3.8.0-h5d29faa_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '7abc4ba38188144ded504e21a5d4efba634471a46b9cafd9beefd550f53efc80') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-google-cloud-cpp-core-feedstock" -Recurse -Filter 'libgoogle-cloud-monitoring-devel-3.8.0-h5d29faa_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '88b2f4aee3c6dbffb83b11e2c6a11f3411590c259bf5592306afa46f254c57b5') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-google-cloud-cpp-core-feedstock" -Recurse -Filter 'libgoogle-cloud-devel-3.8.0-h8b8127c_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '4b28c0e05e3f4d92bcddaa2ddc487dcde46832e8c20c6b4a5882e794564c5060') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-google-cloud-cpp-core-feedstock" -Recurse -Filter 'libgoogle-cloud-oauth2-3.8.0-h5d29faa_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne 'e2cf5a4d9b7bf2fb6c26c83e3391f7d260a02b87bed6ad726127aa6ef40510f2') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-google-cloud-cpp-core-feedstock" -Recurse -Filter 'libgoogle-cloud-trace-devel-3.8.0-h5d29faa_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne 'e29dc17d2fdca2f927ea80d9cb21b28814e67d8194c95bdb0ba7da343a0b00f9') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-google-cloud-cpp-core-feedstock" -Recurse -Filter 'libgoogle-cloud-logging-devel-3.8.0-h5d29faa_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '9ca7a9aac24902ae8842798f5df81114cc272c9d4ed30d9b497f6bf319d17672') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-google-cloud-cpp-core-feedstock" -Recurse -Filter 'libgoogle-cloud-pubsub-3.8.0-h5d29faa_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '61ff9f8cfaff39ba3f8e1abf993fc8f2bb314a03ff2f6ed0855056a7cfafac92') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-google-cloud-cpp-core-feedstock" -Recurse -Filter 'libgoogle-cloud-oauth2-devel-3.8.0-h5d29faa_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne 'c168a3015ea86a9da8013b919bd307e2e184fd2d8aefd03969cdd78d03aa586d') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-google-cloud-cpp-core-feedstock" -Recurse -Filter 'libgoogle-cloud-policytroubleshooter-devel-3.8.0-h5d29faa_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne 'c9838497a05dabd4ad4448cafb63f09133402d4f4f4c213e74779c77e74ebcae') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          gh run download 34689696299 --repo ClayWarren/capnproto-feedstock --name capnproto-arm64-package --dir "$env:RUNNER_TEMP/tiledb-capnproto-feedstock"
+          if ($LASTEXITCODE -ne 0) { throw 'Artifact download failed' }
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-capnproto-feedstock" -Recurse -Filter 'capnproto-1.5.0-h7bfff5b_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '2c61cf7c3b8c767047f8df6f19a4723654905f078641f2082cfd0e21a010c203') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+          gh run download 34683554481 --repo ClayWarren/c-blosc2-feedstock --name c-blosc2-arm64-package --dir "$env:RUNNER_TEMP/tiledb-c-blosc2-feedstock"
+          if ($LASTEXITCODE -ne 0) { throw 'Artifact download failed' }
+          $pkg = @(Get-ChildItem "$env:RUNNER_TEMP/tiledb-c-blosc2-feedstock" -Recurse -Filter 'c-blosc2-3.3.4-h0c36ea2_1.conda')
+          if ($pkg.Count -ne 1) { throw 'Expected one exact prerequisite' }
+          if ((Get-FileHash $pkg[0].FullName -Algorithm SHA256).Hash.ToLower() -ne '078c353c5c9313a051eb48356b0552a927606b62b786e0cf4e0294718643f16b') { throw 'Prerequisite checksum mismatch' }
+          Copy-Item $pkg[0].FullName C:/tiledb-prereqs/win-arm64/
+      - name: Build and test TileDB
+        shell: cmd
+        env:
+          BUILD_PLATFORM: win-arm64
+          HOST_PLATFORM: win-arm64
+          CI: github_actions
+          CONDA_BLD_PATH: C:\bld
+          CONFIG: ${{ matrix.config }}
+          MINIFORGE_HOME: C:\Miniforge
+          PYTHONUNBUFFERED: '1'
+          UPLOAD_PACKAGES: 'False'
+          CONDA_CHANNEL_PRIORITY: strict
+          EXTRA_CB_OPTIONS: '--override-channels -c file:///C:/tiledb-prereqs -c conda-forge'
+          RATTLER_BUILD_COLOR: always
+          RATTLER_BUILD_ENABLE_GITHUB_INTEGRATION: 'true'
+        run: |
+          set "flow_run_id=github_%GITHUB_RUN_ID%"
+          set "remote_url=https://github.com/%GITHUB_REPOSITORY%"
+          set "sha=%GITHUB_SHA%"
+          call ".scripts\run_win_build.bat"
+      - name: Preserve TileDB package
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: tiledb-arm64-package
+          path: C:\bld\win-arm64\*.conda
+          if-no-files-found: warn
+          retention-days: 90
